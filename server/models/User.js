@@ -13,7 +13,9 @@ const UserSchema = new Schema({
     password: {
         type: String,
         require: true
-    }
+    },
+    tokenLastDate: Date,
+    refreshToken: String,
 }, {timestamps: true});
 
 UserSchema.pre('save', async function (next) {
@@ -25,9 +27,6 @@ UserSchema.pre('save', async function (next) {
     next();
 });
 
-UserSchema.methods.checkPassword = function (password) {
-    return bCrypt.compareSync(password, this.password);
-};
 
 UserSchema.index({email: 1});
 
