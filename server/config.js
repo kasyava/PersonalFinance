@@ -6,5 +6,7 @@ module.exports = {
         URL: 'mongodb://localhost:27017',
         NAME: 'personal_finance'
     },
-    JWT_SECRET: 'MY_JWT_SECRET_PHRASE'
+    JWT_SECRET: 'MY_JWT_SECRET_PHRASE',
+    USERNAME_MIN_LENGHT: 4,
+    PASSWORD_MIN_LENGHT: 6
 }
