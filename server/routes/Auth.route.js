@@ -1,12 +1,14 @@
-const express = require('express');
+const {Router} = require('express');
 const {check, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/User');
+const memcached = require('../libs/memcached/memcached')
+
+const User = require('../models/User.model');
 const config = require('../config')
 
-const router = express.Router();
+const router = Router();
 
 router.post('/login', [
         check('email', 'Please enter a valid email address').normalizeEmail().isEmail(),
@@ -33,7 +35,6 @@ router.post('/login', [
             let dtLastLogin = Math.floor(Date.now() / 1000);
             user.tokenLastDate = (dtLastLogin * 1000);
 
-
             let dataAccessToken = {
                 iat: dtLastLogin,
                 userId: user._id,
@@ -48,7 +49,8 @@ router.post('/login', [
             };
             let jwtRefreshToken = jwt.sign(dataRefreshToken, config.JWT_SECRET, {algorithm: 'HS256', expiresIn: '2d'});
             user.refreshToken = jwtRefreshToken;
-            user.save().then(() => {
+            user.save().then((sUser) => {
+                memcached.set(`${req.hostname}-user-${sUser._id}`, sUser, 300);
                 res.json({token: jwtAccessToken, refreshToken: jwtRefreshToken});
             })
 
@@ -78,6 +80,7 @@ router.post('/registration', [
             let user = new User({email, username, password});
             user.save().then(() => {
                 res.status(201).json({message: 'The user has been created'});
+
             })
 
 
