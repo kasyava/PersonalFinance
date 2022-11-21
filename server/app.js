@@ -5,8 +5,11 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
 const config = require('./config');
+const memcached = require('./libs/memcached/memcached');
 
-const auth = require('./routes/Auth');
+
+const auth = require('./routes/Auth.route');
+const category = require('./routes/Category.route');
 
 const app = express();
 app.use(helmet());
@@ -15,6 +18,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/api/auth', auth);
+app.use('/api/category', category);
 
 
 const dbConnect = () => {
@@ -22,7 +26,8 @@ const dbConnect = () => {
 
     app.listen(config.PORT, () => {
         console.log(`Server started on ${config.PORT} port!`)
-    })
+    });
+    memcached.connect();
 }
 
 mongoose.connect(config.DB.URL + '/' + config.DB.NAME, {}, dbConnect);
