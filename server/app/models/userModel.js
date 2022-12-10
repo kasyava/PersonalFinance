@@ -30,6 +30,6 @@ UserSchema.pre('save', async function (next) {
 
 UserSchema.index({email: 1});
 
-const Users = mongoose.model('Users', UserSchema);
+const User = mongoose.model('User', UserSchema);
 
-module.exports = Users;
+module.exports = User;

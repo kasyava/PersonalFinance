@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-const memcached = require('../libs/memcached/memcached');
 const {isValidObjectId} = require('../libs/validators')
 
-const config = require('../config');
-const User = require('../models/User.model');
+const config = require('../../config');
+const User = require('../models/userModel');
 
 const auth = (req, res, next) => {
     const header = req.headers['authorization'];
@@ -16,11 +15,8 @@ const auth = (req, res, next) => {
 
         if (err) return res.status(401).json({message: "Unauthorized"});
         if (!isValidObjectId(decoded.userId)) return res.status(400).json({message: "Bad request"});
-        let user;
 
-        user = await memcached.get(`${req.hostname}-user-${decoded.userId}`);
-
-        if (!user) user = await User.findOne({_id: decoded.userId})
+        let user = await User.findOne({_id: decoded.userId})
         if (!user || (new Date(user.tokenLastDate).getTime() !== new Date(decoded.iat * 1000).getTime())) return res.status(401).json({message: "Unauthorized"});
 
         req.user = user;

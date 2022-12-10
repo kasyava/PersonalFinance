@@ -7,6 +7,6 @@ module.exports = {
         NAME: 'personal_finance'
     },
     JWT_SECRET: 'MY_JWT_SECRET_PHRASE',
-    USERNAME_MIN_LENGHT: 4,
-    PASSWORD_MIN_LENGHT: 6
+    USERNAME_MIN_LENGTH: 4,
+    PASSWORD_MIN_LENGTH: 6
 }
